@@ -1,0 +1,66 @@
+name: Part 2 - install detailed reading
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/part2.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+  pages: write
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify source and connect the module
+        run: |
+          python3 - <<'PY'
+          import pathlib, subprocess, re
+          p=pathlib.Path('index.html')
+          text=p.read_text()
+          marker='<script src="./part2.js?v=2"></script>'
+          if marker not in text:
+              actual=subprocess.check_output(['git','hash-object','index.html'],text=True).strip()
+              if actual!='90670482ac2243457313a152af428983d5a6d372':
+                  raise SystemExit('Unexpected index.html revision; stopped without overwriting')
+              if text.count('</body>')!=1:
+                  raise SystemExit('Expected one body closing tag')
+              p.write_text(text.replace('</body>',marker+'</body>'))
+          script=re.search(r'<script>(.*?)</script>',text,re.S).group(1)
+          pathlib.Path('/tmp/base.js').write_text(script)
+          PY
+          node --check /tmp/base.js
+          node --check part2.js
+      - name: Test interpretations
+        run: |
+          node <<'JS'
+          const fs=require('fs'),vm=require('vm'),assert=require('assert');
+          const base=fs.readFileSync('/tmp/base.js','utf8');
+          const data=base.slice(0,base.indexOf('const $='));
+          const ctx={reading:()=>'',ask:async()=>'',console};vm.createContext(ctx);
+          vm.runInContext(data,ctx);
+          vm.runInContext(fs.readFileSync('part2.js','utf8'),ctx);
+          for(let a=0;a<22;a++)for(let b=0;b<22;b++)for(let c=0;c<22;c++){
+            const reduce=n=>{while(n>22)n=String(n).split('').reduce((x,y)=>x+Number(y),0);return n===22?0:n};
+            const ids=[a,b,c,reduce(a+b+c),reduce(a+c),reduce(a+b),reduce(b+c)];
+            const t=ctx.reading(ids,'test <question>');
+            assert(t.includes('СОЧЕТАНИЯ'));assert(t.includes('КАЖДАЯ КАРТА'));
+            assert(t.includes('ПОВТОРЫ'));assert(!t.includes('undefined'));
+            assert(t.includes('test <question>'));assert(t.length>2000);
+          }
+          assert.throws(()=>ctx.reading([22,0,0,0,0,0,0],''));
+          console.log('10648 combinations and invalid-input check passed');
+          JS
+      - name: Commit the index change
+        run: |
+          if ! git diff --quiet -- index.html; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add index.html
+            git commit -m 'Part 2: enable detailed reading module'
+            git push origin HEAD:main
+          fi
+      - name: Request Pages rebuild
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api --method POST repos/${{ github.repository }}/pages/builds
