@@ -1,0 +1,61 @@
+name: Part 3 - Telegram drawings link
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/part3.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+  pages: write
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Add and check Telegram banner
+        run: |
+          python3 - <<'PY'
+          import pathlib, subprocess, re
+          p=pathlib.Path('index.html')
+          text=p.read_text()
+          anchor='<section id="online" class="panel" hidden></section>'
+          banner='<aside id="telegram-art" hidden aria-label="Рисунки автора" style="margin:20px 0;padding:20px;border:1px solid var(--a);border-radius:16px;background:linear-gradient(135deg,#ffffff12,#ffffff03);text-align:center"><h2 style="font-size:20px;color:var(--a);margin:0 0 10px">Мои рисунки в Telegram</h2><p style="line-height:1.5;margin:0 0 16px">Загляните в мой канал с рисунками.</p><a href="https://t.me/printprintprintprintprintprint" target="_blank" rel="noopener noreferrer" style="display:inline-block;padding:14px 20px;min-height:48px;border-radius:12px;border:1px solid var(--a);color:var(--a);text-decoration:none;font-weight:bold">🎨 Смотреть рисунки →</a></aside><script>(()=>{const r=document.getElementById(\'result\'),b=document.getElementById(\'telegram-art\');if(!r||!b)return;const sync=()=>{b.hidden=r.hidden};sync();new MutationObserver(sync).observe(r,{attributes:true,attributeFilter:[\'hidden\']});})();</script>'
+          if 'id="telegram-art"' not in text:
+              actual=subprocess.check_output(['git','hash-object','index.html'],text=True).strip()
+              if actual!='42410632017fa6215e61f9eb91a55f3abbed1706':
+                  raise SystemExit('Unexpected index revision; stopped without overwriting')
+              if text.count(anchor)!=1:
+                  raise SystemExit('Expected one online-result section')
+              text=text.replace(anchor,anchor+banner)
+              p.write_text(text)
+          assert text.count('id="telegram-art"')==1
+          assert 'href="https://t.me/printprintprintprintprintprint"' in text
+          assert text.index(anchor)<text.index('id="telegram-art"')<text.index('<details><summary>История')
+          assert '<script src="./part2.js?v=2"></script>' in text
+          from html.parser import HTMLParser
+          class Check(HTMLParser):
+              def __init__(self):
+                  super().__init__(); self.links=[]
+              def handle_starttag(self,t,a):
+                  d=dict(a)
+                  if t=='a' and d.get('href')=='https://t.me/printprintprintprintprintprint': self.links.append(d)
+          c=Check(); c.feed(text)
+          assert len(c.links)==1 and c.links[0]['target']=='_blank'
+          assert set(c.links[0]['rel'].split())=={'noopener','noreferrer'}
+          pathlib.Path('/tmp/telegram-check.js').write_text(re.search(r'<script>(.*?)</script>',banner,re.S).group(1))
+          print('Telegram URL, placement, uniqueness and part2 inclusion: OK')
+          PY
+          node --check /tmp/telegram-check.js
+      - name: Commit banner
+        run: |
+          if ! git diff --quiet -- index.html; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add index.html
+            git commit -m 'Part 3: add Telegram drawings link after the answer'
+            git push origin HEAD:main
+          fi
+      - name: Request Pages rebuild
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api --method POST repos/${{ github.repository }}/pages/builds
