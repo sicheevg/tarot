@@ -1,0 +1,52 @@
+name: Part 6 - Telegram on top and English language
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/part6.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+  pages: write
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Connect module (guarded)
+        run: |
+          python3 - <<'PY'
+          import pathlib, subprocess
+          h=pathlib.Path('index.html'); html=h.read_text()
+          marker='<script src="./part6.js?v=6"></script>'
+          if marker not in html:
+              if subprocess.check_output(['git','hash-object','index.html'],text=True).strip()!='ab494b4c5a4fcc5947f60647f61c8a0e5e372d33':
+                  raise SystemExit('Unexpected index.html revision; stopped without overwriting')
+              if html.count('</body>')!=1: raise SystemExit('Unexpected body structure')
+              html=html.replace('</body>',marker+'</body>'); h.write_text(html)
+          assert html.index('part4.js?v=4')<html.index('part6.js?v=6')
+          assert 'id="telegram-art"' in html and 'https://t.me/printprintprintprintprintprint' in html
+          PY
+          node --check part6.js
+      - name: Install browser
+        run: |
+          npm install --no-save --package-lock=false playwright
+          npx playwright install --with-deps chromium
+      - name: Verify in Chromium
+        run: node part6.test.cjs && node part5.test.cjs
+      - name: Commit verified change
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html audit-results-part6.json audit-results.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Part 6: Telegram banner on top, RU/EN switch'
+            git push origin HEAD:main
+          fi
+      - name: Request Pages rebuild
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api --method POST repos/${{ github.repository }}/pages/builds
