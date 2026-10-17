@@ -1,5 +1,5 @@
 const {chromium}=require('playwright');const fs=require('fs'),assert=require('assert');const checks=[];function check(n,v){checks.push({name:n,passed:!!v});assert(v,n)}
-(async()=>{const browser=await chromium.launch({headless:true});try{const context=await browser.newContext({viewport:{width:390,height:844},isMobile:true});
+(async()=>{const browser=await chromium.launch({headless:true});try{const context=await browser.newContext({viewport:{width:390,height:844},isMobile:true,reducedMotion:'reduce'});
 const files={'/index.html':['text/html',fs.readFileSync('index.html','utf8')],'/part2.js':['application/javascript',fs.readFileSync('part2.js','utf8')],'/part4.js':['application/javascript',fs.readFileSync('part4.js','utf8')],'/part6.js':['application/javascript',fs.readFileSync('part6.js','utf8')]};
 await context.route('**/*',route=>{const u=new URL(route.request().url());const f=u.hostname==='tarot.test'?files[u.pathname]:null;return f?route.fulfill({status:200,contentType:f[0],body:f[1]}):route.abort()});
 await context.addInitScript(()=>{window.testAI={calls:[]};window.puter={auth:{isSignedIn:()=>true},ai:{chat:async(messages,options)=>{testAI.calls.push({messages,options});return {message:{content:'TEST_RESPONSE '+options.model}}}}}});
@@ -23,10 +23,10 @@ await page.evaluate(()=>{testAI.calls=[];document.querySelector('#model').value=
 check('English detailed reading',await page.evaluate(()=>H[0].local.includes('DETAILED READING')&&H[0].local.includes('COMBINATIONS')&&!/[А-Яа-я]/.test(H[0].local)));
 check('English card names in cards',await page.evaluate(()=>[...document.querySelectorAll('.card .front small:last-child')].every(s=>!/[А-Яа-я]/.test(s.textContent))));
 check('AI asked to respond in English',await page.evaluate(()=>testAI.calls.length>0&&testAI.calls.every(c=>c.messages[0].content.includes('Respond in English'))));
-check('AI status translated',await page.locator('#online').textContent().then(t=>t.includes('Answered:')&&!t.includes('Ответили')));
+check('AI status translated',await page.locator('#online').textContent().then(t=>t.includes('Answered: Western')&&!/Ответили|Западная/.test(t)));
 check('No overflow in English',await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
 await page.reload();check('English persists after reload',await page.locator('#orb').textContent()==='Read');
 await page.locator('#lang').click();await page.locator('#again').click();await done();
 check('Back to Russian',await page.locator('h1').textContent()==='ТАРО МАРСЕЛЬ'&&await page.evaluate(()=>H[0].local.includes('РАЗВЁРНУТОЕ ЧТЕНИЕ')&&N[0]==='Шут'));
 check('No uncaught exceptions',errors.length===0);
-}finally{await browser.close();fs.writeFileSync('audit-results-part6.json',JSON.stringify({environment:'Chromium; repository files; mocked Puter',timestamp:new Date().toISOString(),checks},null,2))}})().catch(e=>{console.error(e);process.exitCode=1});
+}finally{await browser.close();fs.writeFileSync('audit-results-part6.json',JSON.stringify({environment:'Chromium; repository files; mocked Puter; reduced motion',timestamp:new Date().toISOString(),checks},null,2))}})().catch(e=>{console.error(e);process.exitCode=1});
