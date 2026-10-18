@@ -5,7 +5,7 @@ const $=id=>document.getElementById(id),wait=ms=>new Promise(r=>setTimeout(r,ms)
 const SYM=['✧','⚚','☾','❀','♔','☩','♡','⚔','⚖','⌛','☸','♌','↕','☠','⚱','♑','ϟ','★','☽','☀','♬','◎'];
 const THEMES=[['#10091c','#d8b366','☿ ☉ ☽'],['#09090e','#dc8993','✝ ☾ ✝'],['#09231a','#a8d99a','⚔ ❀ ⚔'],['#64113e','#ffd6ee','♡ ✧ ♡'],['#161333','#efcd75','♛ ⚜ ♛'],['#102632','#ace7f3','❄ ♧ ❄'],['#380b0f','#f0ca72','龍 ☯ 鳳'],['#38200f','#ecc680','◆ ✦ ◆'],['#070c27','#adc3ff','✦ ☄ ✦'],['#291621','#f2bacb','❀ ⛩ ❀']];
 const UI={
-ru:{title:'ТАРО МАРСЕЛЬ',doc:'Таро Марсель',lang:'EN',menu:'Настройки',orb:'Гадать',again:'Гадать снова',ask:'Задать вопрос',cancel:'Отмена',go:'Гадать',qTitle:'Ваш вопрос',qHint:'Лучше спрашивать о настоящем: «что происходит со мной в…», «что мне важно понять о…»',
+ru:{title:'ТАРО МАРСЕЛЬ',doc:'Бесплатное гадание на Марсельском Таро онлайн · метод Ходоровски',lang:'EN',menu:'Настройки',orb:'Гадать',again:'Гадать снова',ask:'Задать вопрос',cancel:'Отмена',go:'Гадать',qTitle:'Ваш вопрос',qHint:'Лучше спрашивать о настоящем: «что происходит со мной в…», «что мне важно понять о…»',
 tgTitle:'Мои рисунки в Telegram',tgText:'Загляните в мой канал с рисунками.',tgBtn:'🎨 Смотреть рисунки →',
 settings:'Оформление',history:'История',search:'Поиск по вопросу или карте',export:'Экспорт JSON',import:'Импорт',del:'Удалить',delQ:'Удалить запись?',
 themes:['Ходоровски · космическая сага','Готика','Фэнтези · орки и эльфы','Барби','Королевский','Сибирь','Китай','Африка','Космос','Япония'],
@@ -14,7 +14,7 @@ method:'О методе',methodText:'Расклад из семи позиций
 dealing:'Раскладываю карты…',saved:'Расклад сохранён в истории.',storeFail:'История не записалась на устройство. Сделайте экспорт — записи остаются в этой вкладке.',
 imported:n=>'Импортировано новых записей: '+n,impErr:'Импорт: ',tooBig:'Файл больше 10 МБ',notArr:'Нужен массив записей JSON',broken:'Есть повреждённые записи; импорт не выполнен, история не изменена',err:'Не удалось завершить расклад: ',
 archiveAI:'Онлайн-чтение (архив прежней версии):',foot:'Символическое чтение по мотивам Марсельского Таро. Не является прогнозом событий и не заменяет медицинских, финансовых и юридических консультаций.',locale:'ru-RU'},
-en:{title:'TAROT OF MARSEILLE',doc:'Tarot of Marseille',lang:'RU',menu:'Settings',orb:'Read',again:'Read again',ask:'Ask a question',cancel:'Cancel',go:'Read',qTitle:'Your question',qHint:'It is better to ask about the present: “what is happening to me in…”, “what do I need to understand about…”',
+en:{title:'TAROT OF MARSEILLE',doc:'Free Tarot of Marseille Reading Online · Jodorowsky Method · 7-Card Spread',lang:'RU',menu:'Settings',orb:'Read',again:'Read again',ask:'Ask a question',cancel:'Cancel',go:'Read',qTitle:'Your question',qHint:'It is better to ask about the present: “what is happening to me in…”, “what do I need to understand about…”',
 tgTitle:'My drawings on Telegram',tgText:'Take a look at my channel with drawings.',tgBtn:'🎨 See the drawings →',
 settings:'Appearance',history:'History',search:'Search by question or card',export:'Export JSON',import:'Import',del:'Delete',delQ:'Delete this entry?',
 themes:['Jodorowsky · cosmic saga','Gothic','Fantasy · orcs and elves','Barbie','Royal','Siberia','China','Africa','Cosmos','Japan'],
@@ -25,7 +25,8 @@ imported:n=>'New entries imported: '+n,impErr:'Import: ',tooBig:'File is larger 
 archiveAI:'Online reading (archive from the previous version):',foot:'A symbolic reading inspired by the Tarot of Marseille. Not a forecast of events and not a substitute for medical, financial or legal advice.',locale:'en-GB'}};
 function load(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v??d}catch(e){return d}}
 function store(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}}
-let lang=load('lang_v6','ru')==='en'?'en':'ru',busy=false,question='',storageWarning=false,current=null;
+const urlLang=new URLSearchParams(location.search).get('lang');if(urlLang==='ru'||urlLang==='en')store('lang_v6',urlLang);
+let lang=load('lang_v6','en')==='ru'?'ru':'en',busy=false,question='',storageWarning=false,current=null;
 let N=[...DATA[lang].names];
 function normalize(r){
 if(!r||typeof r!=='object'||!Array.isArray(r.ids)||r.ids.length!==7||!r.ids.every(i=>Number.isInteger(i)&&i>=0&&i<22)||!Number.isFinite(r.ts)||r.ts<0||typeof r.local!=='string'||(r.q!=null&&typeof r.q!=='string')||(r.ai!=null&&typeof r.ai!=='string'))return null;

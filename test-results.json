@@ -1,13 +1,46 @@
 {
- "version": 8,
+ "version": 9,
  "environment": "Playwright WebKit (движок Safari) и Chromium с профилями iPhone; локальный сервер; внешние запросы отслеживаются",
- "timestamp": "2026-10-18T12:30:30.814Z",
- "passed": 125,
- "total": 125,
+ "timestamp": "2026-10-18T13:50:02.530Z",
+ "passed": 149,
+ "total": 149,
  "results": [
   {
    "env": "webkit / iPhone SE",
    "name": "Нет ошибок JavaScript при запуске",
+   "passed": true
+  },
+  {
+   "env": "webkit / iPhone SE",
+   "name": "Новый посетитель видит английскую версию",
+   "passed": true
+  },
+  {
+   "env": "webkit / iPhone SE",
+   "name": "Поисковые метки: описание, canonical, Open Graph, schema.org, hreflang",
+   "passed": true,
+   "detail": "{\"desc\":161,\"ld\":\"WebApplication\",\"hreflang\":3}"
+  },
+  {
+   "env": "webkit / iPhone SE",
+   "name": "Видимый английский текст для поисковиков",
+   "passed": true,
+   "detail": "228 слов"
+  },
+  {
+   "env": "webkit / iPhone SE",
+   "name": "Заголовок страницы на английском",
+   "passed": true,
+   "detail": "Free Tarot of Marseille Reading Online · Jodorowsky Method · 7-Card Spread"
+  },
+  {
+   "env": "webkit / iPhone SE",
+   "name": "robots.txt, sitemap.xml и картинка превью доступны",
+   "passed": true
+  },
+  {
+   "env": "webkit / iPhone SE",
+   "name": "Ссылка ?lang=ru открывает русскую версию",
    "passed": true
   },
   {
@@ -19,7 +52,7 @@
    "env": "webkit / iPhone SE",
    "name": "Кнопка «Гадать» целиком видна на первом экране",
    "passed": true,
-   "detail": "низ кнопки 302 из 568 px"
+   "detail": "низ кнопки 324 из 568 px"
   },
   {
    "env": "webkit / iPhone SE",
@@ -55,7 +88,7 @@
    "env": "webkit / iPhone SE",
    "name": "Объём чтения 600–1300 слов",
    "passed": true,
-   "detail": "916 слов"
+   "detail": "919 слов"
   },
   {
    "env": "webkit / iPhone SE",
@@ -171,6 +204,39 @@
   },
   {
    "env": "webkit / iPhone 16",
+   "name": "Новый посетитель видит английскую версию",
+   "passed": true
+  },
+  {
+   "env": "webkit / iPhone 16",
+   "name": "Поисковые метки: описание, canonical, Open Graph, schema.org, hreflang",
+   "passed": true,
+   "detail": "{\"desc\":161,\"ld\":\"WebApplication\",\"hreflang\":3}"
+  },
+  {
+   "env": "webkit / iPhone 16",
+   "name": "Видимый английский текст для поисковиков",
+   "passed": true,
+   "detail": "228 слов"
+  },
+  {
+   "env": "webkit / iPhone 16",
+   "name": "Заголовок страницы на английском",
+   "passed": true,
+   "detail": "Free Tarot of Marseille Reading Online · Jodorowsky Method · 7-Card Spread"
+  },
+  {
+   "env": "webkit / iPhone 16",
+   "name": "robots.txt, sitemap.xml и картинка превью доступны",
+   "passed": true
+  },
+  {
+   "env": "webkit / iPhone 16",
+   "name": "Ссылка ?lang=ru открывает русскую версию",
+   "passed": true
+  },
+  {
+   "env": "webkit / iPhone 16",
    "name": "Puter полностью удалён",
    "passed": true
   },
@@ -178,7 +244,7 @@
    "env": "webkit / iPhone 16",
    "name": "Кнопка «Гадать» целиком видна на первом экране",
    "passed": true,
-   "detail": "низ кнопки 320 из 659 px"
+   "detail": "низ кнопки 346 из 659 px"
   },
   {
    "env": "webkit / iPhone 16",
@@ -214,7 +280,7 @@
    "env": "webkit / iPhone 16",
    "name": "Объём чтения 600–1300 слов",
    "passed": true,
-   "detail": "959 слов"
+   "detail": "899 слов"
   },
   {
    "env": "webkit / iPhone 16",
@@ -336,6 +402,39 @@
   },
   {
    "env": "webkit / iPhone 16 Pro Max",
+   "name": "Новый посетитель видит английскую версию",
+   "passed": true
+  },
+  {
+   "env": "webkit / iPhone 16 Pro Max",
+   "name": "Поисковые метки: описание, canonical, Open Graph, schema.org, hreflang",
+   "passed": true,
+   "detail": "{\"desc\":161,\"ld\":\"WebApplication\",\"hreflang\":3}"
+  },
+  {
+   "env": "webkit / iPhone 16 Pro Max",
+   "name": "Видимый английский текст для поисковиков",
+   "passed": true,
+   "detail": "228 слов"
+  },
+  {
+   "env": "webkit / iPhone 16 Pro Max",
+   "name": "Заголовок страницы на английском",
+   "passed": true,
+   "detail": "Free Tarot of Marseille Reading Online · Jodorowsky Method · 7-Card Spread"
+  },
+  {
+   "env": "webkit / iPhone 16 Pro Max",
+   "name": "robots.txt, sitemap.xml и картинка превью доступны",
+   "passed": true
+  },
+  {
+   "env": "webkit / iPhone 16 Pro Max",
+   "name": "Ссылка ?lang=ru открывает русскую версию",
+   "passed": true
+  },
+  {
+   "env": "webkit / iPhone 16 Pro Max",
    "name": "Puter полностью удалён",
    "passed": true
   },
@@ -379,7 +478,7 @@
    "env": "webkit / iPhone 16 Pro Max",
    "name": "Объём чтения 600–1300 слов",
    "passed": true,
-   "detail": "1000 слов"
+   "detail": "950 слов"
   },
   {
    "env": "webkit / iPhone 16 Pro Max",
@@ -495,6 +594,39 @@
   },
   {
    "env": "chromium / iPhone 16",
+   "name": "Новый посетитель видит английскую версию",
+   "passed": true
+  },
+  {
+   "env": "chromium / iPhone 16",
+   "name": "Поисковые метки: описание, canonical, Open Graph, schema.org, hreflang",
+   "passed": true,
+   "detail": "{\"desc\":161,\"ld\":\"WebApplication\",\"hreflang\":3}"
+  },
+  {
+   "env": "chromium / iPhone 16",
+   "name": "Видимый английский текст для поисковиков",
+   "passed": true,
+   "detail": "228 слов"
+  },
+  {
+   "env": "chromium / iPhone 16",
+   "name": "Заголовок страницы на английском",
+   "passed": true,
+   "detail": "Free Tarot of Marseille Reading Online · Jodorowsky Method · 7-Card Spread"
+  },
+  {
+   "env": "chromium / iPhone 16",
+   "name": "robots.txt, sitemap.xml и картинка превью доступны",
+   "passed": true
+  },
+  {
+   "env": "chromium / iPhone 16",
+   "name": "Ссылка ?lang=ru открывает русскую версию",
+   "passed": true
+  },
+  {
+   "env": "chromium / iPhone 16",
    "name": "Puter полностью удалён",
    "passed": true
   },
@@ -502,7 +634,7 @@
    "env": "chromium / iPhone 16",
    "name": "Кнопка «Гадать» целиком видна на первом экране",
    "passed": true,
-   "detail": "низ кнопки 311 из 659 px"
+   "detail": "низ кнопки 333 из 659 px"
   },
   {
    "env": "chromium / iPhone 16",
@@ -538,7 +670,7 @@
    "env": "chromium / iPhone 16",
    "name": "Объём чтения 600–1300 слов",
    "passed": true,
-   "detail": "922 слов"
+   "detail": "935 слов"
   },
   {
    "env": "chromium / iPhone 16",

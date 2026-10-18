@@ -12,12 +12,22 @@ const external=[];ctx.on('request',r=>{const u=new URL(r.url());if(u.hostname!==
 const page=await ctx.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
 await page.goto(base,{waitUntil:'load'});
 check(env,'Нет ошибок JavaScript при запуске',errors.length===0,errors.join(' | ')||undefined);
+check(env,'Новый посетитель видит английскую версию',await page.evaluate(()=>document.documentElement.lang==='en'&&document.querySelector('h1').textContent==='TAROT OF MARSEILLE'&&document.querySelector('#orb').textContent==='Read'&&document.querySelector('#tgTitle').textContent==='My drawings on Telegram'));
+const seo=await page.evaluate(()=>{const m=n=>document.querySelector(n);let ld=null;try{ld=JSON.parse(m('script[type="application/ld+json"]').textContent)}catch(e){}return{title:document.title,desc:(m('meta[name=description]')||{}).content||'',canon:(m('link[rel=canonical]')||{}).href,og:(m('meta[property="og:image"]')||{}).content,robots:(m('meta[name=robots]')||{}).content,ld:ld&&ld['@type'],hreflang:document.querySelectorAll('link[hreflang]').length,about:(m('#about')||{}).textContent||''}});
+check(env,'Поисковые метки: описание, canonical, Open Graph, schema.org, hreflang',seo.desc.length>=120&&seo.desc.length<=170&&seo.canon==='https://sicheevg.github.io/tarot/'&&/og-image\.png$/.test(seo.og)&&/index/.test(seo.robots)&&seo.ld==='WebApplication'&&seo.hreflang===3,JSON.stringify({desc:seo.desc.length,ld:seo.ld,hreflang:seo.hreflang}));
+check(env,'Видимый английский текст для поисковиков',seo.about.includes('Jodorowsky')&&seo.about.split(/\s+/).length>150,seo.about.split(/\s+/).length+' слов');
+check(env,'Заголовок страницы на английском',/^Free Tarot of Marseille Reading/.test(seo.title),seo.title);
+const rp=await page.request.get(base+'robots.txt'),sm=await page.request.get(base+'sitemap.xml'),og=await page.request.get(base+'og-image.png');
+check(env,'robots.txt, sitemap.xml и картинка превью доступны',rp.ok()&&sm.ok()&&og.ok()&&(await sm.text()).includes('<loc>https://sicheevg.github.io/tarot/</loc>'));
+const p2=await ctx.newPage();await p2.goto(base+'?lang=ru');check(env,'Ссылка ?lang=ru открывает русскую версию',await p2.locator('h1').textContent()==='ТАРО МАРСЕЛЬ');await p2.close();
+await page.evaluate(()=>localStorage.setItem('lang_v6','"en"'));await page.reload();
 check(env,'Puter полностью удалён',await page.evaluate(()=>!window.puter&&!document.documentElement.outerHTML.toLowerCase().includes('puter')&&![...document.scripts].some(s=>/puter/i.test(s.src))));
 const lay=await page.evaluate(()=>{const o=document.querySelector('#orb').getBoundingClientRect(),b=document.querySelector('#telegram-art').getBoundingClientRect();return{orbBottom:o.bottom,orbTop:o.top,bannerBottom:b.bottom,vh:innerHeight}});
 check(env,'Кнопка «Гадать» целиком видна на первом экране',lay.orbBottom<=lay.vh&&lay.orbTop>0,'низ кнопки '+Math.round(lay.orbBottom)+' из '+lay.vh+' px');
 check(env,'Баннер Telegram сверху, над кнопкой',lay.bannerBottom<=lay.orbTop);
 check(env,'Ссылка Telegram не изменилась',await page.locator('#telegram-art a').getAttribute('href')==='https://t.me/'+'print'.repeat(6));
 check(env,'Нет горизонтальной прокрутки до расклада',await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+await page.locator('#lang').tap();
 await page.locator('#orb').tap({force:true});await page.waitForFunction(()=>!busy,undefined,{timeout:20000});
 check(env,'Касание «Гадать» открывает 7 карт',await page.locator('.card.open').count()===7);
 await page.waitForFunction(()=>[...document.images].every(i=>i.complete),undefined,{timeout:10000}).catch(()=>{});
@@ -68,5 +78,5 @@ check(env,'Нет ошибок JavaScript за весь сценарий',errors
 if(bname==='webkit'&&devName==='iPhone SE'){await page.goto(base);await page.screenshot({path:path.join(ROOT,'..','shot-se-start.png')})}
 if(bname==='webkit'&&devName==='iPhone 16'){await page.goto(base);await page.locator('#orb').tap({force:true});await page.waitForFunction(()=>!busy);await page.waitForTimeout(800);check(env,'После нажатия экран прокручен к картам',await page.evaluate(()=>scrollY>100),'scrollY');await page.screenshot({path:path.join(ROOT,'..','shot-16-reading.png')});await page.evaluate(()=>document.querySelector('#result').scrollIntoView());await page.screenshot({path:path.join(ROOT,'..','shot-16-text.png')});await page.screenshot({path:path.join(ROOT,'..','shot-16-full.png'),fullPage:true})}
 await ctx.close()}catch(e){check(env,'Сценарий завершён без исключения',false,e.message.split('\n')[0])}finally{await browser.close()}}
-srv.close();fs.writeFileSync(path.join(ROOT,'test-results.json'),JSON.stringify({version:8,environment:'Playwright WebKit (движок Safari) и Chromium с профилями iPhone; локальный сервер; внешние запросы отслеживаются',timestamp:new Date().toISOString(),passed:results.filter(r=>r.passed).length,total:results.length,results},null,1));
+srv.close();fs.writeFileSync(path.join(ROOT,'test-results.json'),JSON.stringify({version:9,environment:'Playwright WebKit (движок Safari) и Chromium с профилями iPhone; локальный сервер; внешние запросы отслеживаются',timestamp:new Date().toISOString(),passed:results.filter(r=>r.passed).length,total:results.length,results},null,1));
 console.log('\nИТОГ: '+results.filter(r=>r.passed).length+'/'+results.length);process.exitCode=failed?1:0})();
