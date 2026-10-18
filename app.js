@@ -1,11 +1,12 @@
 /* Таро Марсель — интерфейс. Полностью офлайн: без Puter, без внешних запросов. */
 'use strict';
+const ROOT=new URL('.',document.currentScript&&document.currentScript.src||location.href).href;
 const E=window.TarotEngine,DATA=window.TAROT_DATA,NL='\n';
 const $=id=>document.getElementById(id),wait=ms=>new Promise(r=>setTimeout(r,ms));
 const SYM=['✧','⚚','☾','❀','♔','☩','♡','⚔','⚖','⌛','☸','♌','↕','☠','⚱','♑','ϟ','★','☽','☀','♬','◎'];
 const THEMES=[['#10091c','#d8b366','☿ ☉ ☽'],['#09090e','#dc8993','✝ ☾ ✝'],['#09231a','#a8d99a','⚔ ❀ ⚔'],['#64113e','#ffd6ee','♡ ✧ ♡'],['#161333','#efcd75','♛ ⚜ ♛'],['#102632','#ace7f3','❄ ♧ ❄'],['#380b0f','#f0ca72','龍 ☯ 鳳'],['#38200f','#ecc680','◆ ✦ ◆'],['#070c27','#adc3ff','✦ ☄ ✦'],['#291621','#f2bacb','❀ ⛩ ❀']];
 const UI={
-ru:{title:'ТАРО МАРСЕЛЬ',doc:'Бесплатное гадание на Марсельском Таро онлайн · метод Ходоровски',lang:'EN',menu:'Настройки',orb:'Гадать',again:'Гадать снова',ask:'Задать вопрос',cancel:'Отмена',go:'Гадать',qTitle:'Ваш вопрос',qHint:'Лучше спрашивать о настоящем: «что происходит со мной в…», «что мне важно понять о…»',
+ru:{title:'ТАРО МАРСЕЛЬ',doc:'Марсельское Таро онлайн бесплатно · Гадание по методу Ходоровски',lang:'EN',menu:'Настройки',orb:'Гадать',again:'Гадать снова',ask:'Задать вопрос',cancel:'Отмена',go:'Гадать',qTitle:'Ваш вопрос',qHint:'Лучше спрашивать о настоящем: «что происходит со мной в…», «что мне важно понять о…»',
 tgTitle:'Мои рисунки в Telegram',tgText:'Загляните в мой канал с рисунками.',tgBtn:'🎨 Смотреть рисунки →',
 settings:'Оформление',history:'История',search:'Поиск по вопросу или карте',export:'Экспорт JSON',import:'Импорт',del:'Удалить',delQ:'Удалить запись?',
 themes:['Ходоровски · космическая сага','Готика','Фэнтези · орки и эльфы','Барби','Королевский','Сибирь','Китай','Африка','Космос','Япония'],
@@ -14,7 +15,7 @@ method:'О методе',methodText:'Расклад из семи позиций
 dealing:'Раскладываю карты…',saved:'Расклад сохранён в истории.',storeFail:'История не записалась на устройство. Сделайте экспорт — записи остаются в этой вкладке.',
 imported:n=>'Импортировано новых записей: '+n,impErr:'Импорт: ',tooBig:'Файл больше 10 МБ',notArr:'Нужен массив записей JSON',broken:'Есть повреждённые записи; импорт не выполнен, история не изменена',err:'Не удалось завершить расклад: ',
 archiveAI:'Онлайн-чтение (архив прежней версии):',foot:'Символическое чтение по мотивам Марсельского Таро. Не является прогнозом событий и не заменяет медицинских, финансовых и юридических консультаций.',locale:'ru-RU'},
-en:{title:'TAROT OF MARSEILLE',doc:'Free Tarot of Marseille Reading Online · Jodorowsky Method · 7-Card Spread',lang:'RU',menu:'Settings',orb:'Read',again:'Read again',ask:'Ask a question',cancel:'Cancel',go:'Read',qTitle:'Your question',qHint:'It is better to ask about the present: “what is happening to me in…”, “what do I need to understand about…”',
+en:{title:'TAROT OF MARSEILLE',doc:'Free Tarot Reading Online · Marseille Tarot · Jodorowsky Method',lang:'RU',menu:'Settings',orb:'Read',again:'Read again',ask:'Ask a question',cancel:'Cancel',go:'Read',qTitle:'Your question',qHint:'It is better to ask about the present: “what is happening to me in…”, “what do I need to understand about…”',
 tgTitle:'My drawings on Telegram',tgText:'Take a look at my channel with drawings.',tgBtn:'🎨 See the drawings →',
 settings:'Appearance',history:'History',search:'Search by question or card',export:'Export JSON',import:'Import',del:'Delete',delQ:'Delete this entry?',
 themes:['Jodorowsky · cosmic saga','Gothic','Fantasy · orcs and elves','Barbie','Royal','Siberia','China','Africa','Cosmos','Japan'],
@@ -25,7 +26,7 @@ imported:n=>'New entries imported: '+n,impErr:'Import: ',tooBig:'File is larger 
 archiveAI:'Online reading (archive from the previous version):',foot:'A symbolic reading inspired by the Tarot of Marseille. Not a forecast of events and not a substitute for medical, financial or legal advice.',locale:'en-GB'}};
 function load(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v??d}catch(e){return d}}
 function store(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}}
-const urlLang=new URLSearchParams(location.search).get('lang');if(urlLang==='ru'||urlLang==='en')store('lang_v6',urlLang);
+const urlLang=document.documentElement.dataset.lang||new URLSearchParams(location.search).get('lang');if(urlLang==='ru'||urlLang==='en')store('lang_v6',urlLang);
 let lang=load('lang_v6','en')==='ru'?'ru':'en',busy=false,question='',storageWarning=false,current=null;
 let N=[...DATA[lang].names];
 function normalize(r){
@@ -39,7 +40,7 @@ function save(){storageWarning=!store('history',H);if(storageWarning)$('status')
 function renderHistory(){const term=$('search').value.toLowerCase(),t=T();$('count').textContent='('+H.length+')';$('history').replaceChildren();
 H.filter(r=>!term||(r.q+' '+r.ids.map(i=>DATA.ru.names[i]+' '+DATA.en.names[i]).join(' ')).toLowerCase().includes(term)).forEach(r=>{const e=document.createElement('details');e.className='entry';const sm=document.createElement('summary');sm.textContent=new Date(r.ts).toLocaleString(t.locale)+' · '+(r.q||r.ids.slice(0,3).map(i=>N[i]).join(' · '));e.append(sm);const tx=document.createElement('div');tx.className='text';tx.textContent=r.local+(r.ai?NL+NL+t.archiveAI+NL+r.ai:'');e.append(tx);const del=document.createElement('button');del.type='button';del.textContent=t.del;del.onclick=()=>{if(confirm(t.delQ)){H=H.filter(x=>x.id!==r.id);save()}};e.append(del);$('history').append(e)})}
 function theme(i){const th=THEMES[i]||THEMES[0];document.documentElement.style.setProperty('--bg',th[0]);document.documentElement.style.setProperty('--a',th[1]);$('orn').textContent=th[2];$('theme').value=String(i);store('theme_v6',i)}
-function card(i,k){const e=document.createElement('div');e.className='card'+(k>2?' derived':'');e.dataset.card=i;e.innerHTML='<div class="flip"><div class="face back">✧</div><div class="face front"><small>'+(E.ROMAN[i]||'')+'</small><div class="symbol">'+SYM[i]+'</div><small class="nm"></small></div></div>';e.querySelector('.nm').textContent=N[i];const img=document.createElement('img');img.alt=N[i];img.src='./cards/'+i+'.jpg';img.decoding='async';img.onerror=()=>img.remove();e.querySelector('.front').append(img);return e}
+function card(i,k){const e=document.createElement('div');e.className='card'+(k>2?' derived':'');e.dataset.card=i;e.innerHTML='<div class="flip"><div class="face back">✧</div><div class="face front"><small>'+(E.ROMAN[i]||'')+'</small><div class="symbol">'+SYM[i]+'</div><small class="nm"></small></div></div>';e.querySelector('.nm').textContent=N[i];const img=document.createElement('img');img.alt=N[i];img.src=ROOT+'cards/'+i+'.jpg';img.decoding='async';img.onerror=()=>img.remove();e.querySelector('.front').append(img);return e}
 function lock(on){['orb','again','ask','go','q'].forEach(id=>$(id).disabled=on)}
 async function deal(){if(busy)return;busy=true;lock(true);const q=question,t=T();$('result').hidden=true;$('status').textContent=t.dealing;
 try{const ids=E.spread(),id=Date.now()+'-'+Math.random().toString(36).slice(2),text=E.reading(ids,q,lang,id);const rec={id,ts:Date.now(),q,ids,local:text,ai:'',lang};H.unshift(rec);save();current=rec;
@@ -65,4 +66,4 @@ $('export').onclick=()=>{const a=document.createElement('a');const u=URL.createO
 $('import').onclick=()=>$('file').click();
 $('file').onchange=async e=>{const t=T();try{const f=e.target.files[0];if(!f)return;if(f.size>10*1024*1024)throw new Error(t.tooBig);const data=JSON.parse(await f.text());if(!Array.isArray(data))throw new Error(t.notArr);const batch=data.map(normalize);if(batch.some(x=>!x))throw new Error(t.broken);const known=new Set(H.map(r=>r.id));let n=0;for(const r of batch)if(!known.has(r.id)){H.push(r);known.add(r.id);n++}H.sort((a,b)=>b.ts-a.ts);save();if(!storageWarning)$('status').textContent=t.imported(n)}catch(err){$('status').textContent=t.impErr+(err&&err.message||'?')}finally{e.target.value=''}};
 applyLang();
-if('serviceWorker'in navigator&&/^https?:$/.test(location.protocol))navigator.serviceWorker.register('./sw.js').catch(()=>{});
+if('serviceWorker'in navigator&&/^https?:$/.test(location.protocol))navigator.serviceWorker.register(ROOT+'sw.js',{scope:ROOT}).catch(()=>{});
