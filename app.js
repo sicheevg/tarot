@@ -82,7 +82,7 @@ function getv(k){return fetch(STATS+'/get/'+NS+'/'+k,{cache:'no-store'}).then(r=
 function track(k){if(!isAdmin&&!isBot)hit(k)}
 let lastBeat=0,statsTimer=0;
 function beat(){if(isAdmin||isBot||document.visibilityState!=='visible')return;const m=minute();if(m!==lastBeat&&load('beat_v1',0)!==m){lastBeat=m;store('beat_v1',m);hit('on-'+m)}}
-function startStats(){if(isAdmin||isBot)return;const today=dayOf(new Date());let first=false;try{first=!sessionStorage.getItem('visit_v1');sessionStorage.setItem('visit_v1','1')}catch(e){first=true}
+function startStats(){if(isAdmin||isBot||/(?:^#|&)admin=/.test(location.hash))return;const today=dayOf(new Date());let first=false;try{first=!sessionStorage.getItem('visit_v1');sessionStorage.setItem('visit_v1','1')}catch(e){first=true}
 if(first){hit('visits');hit('day-'+today);if(!load('visitor_v1',false)){store('visitor_v1',true);hit('visitors')}if(load('vday_v1','')!==today){store('vday_v1',today);hit('uday-'+today)}}
 beat();setInterval(beat,20000);document.addEventListener('visibilitychange',beat)}
 async function loadStats(){if(!isAdmin)return;clearTimeout(statsTimer);const t=T(),m=minute(),days=[...Array(7)].map((_,k)=>dayOf(new Date(Date.now()-k*864e5)));

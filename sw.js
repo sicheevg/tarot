@@ -1,6 +1,6 @@
 /* Офлайн-кэш приложения. Версию CACHE меняйте при каждом обновлении файлов. */
-const CACHE='tarot-v12';
-const FILES=['./','./index.html','./ru/','./data-ru.js?v=12','./data-en.js?v=12','./engine.js?v=12','./app.js?v=12','./manifest.webmanifest','./apple-touch-icon.png','./icon-192.png','./icon-512.png','./og-image.png',...Array.from({length:22},(_,i)=>'./cards/'+i+'.jpg'),...Array.from({length:10},(_,i)=>'./backs/'+i+'.jpg'),...Array.from({length:10},(_,i)=>'./backs/orb-'+i+'.jpg')];
+const CACHE='tarot-v13';
+const FILES=['./','./index.html','./ru/','./data-ru.js?v=13','./data-en.js?v=13','./engine.js?v=13','./app.js?v=13','./manifest.webmanifest','./apple-touch-icon.png','./icon-192.png','./icon-512.png','./og-image.png',...Array.from({length:22},(_,i)=>'./cards/'+i+'.jpg'),...Array.from({length:10},(_,i)=>'./backs/'+i+'.jpg'),...Array.from({length:10},(_,i)=>'./backs/orb-'+i+'.jpg')];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
 self.addEventListener('fetch',e=>{const req=e.request;if(req.method!=='GET'||new URL(req.url).origin!==location.origin)return;
