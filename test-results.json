@@ -1,9 +1,9 @@
 {
- "version": 12,
+ "version": 14,
  "environment": "Playwright WebKit (движок Safari) и Chromium с профилями iPhone; локальный сервер; внешние запросы отслеживаются",
- "timestamp": "2026-10-18T15:17:40.162Z",
- "passed": 241,
- "total": 241,
+ "timestamp": "2026-10-18T15:30:37.335Z",
+ "passed": 277,
+ "total": 277,
  "results": [
   {
    "env": "webkit / iPhone SE",
@@ -110,7 +110,7 @@
    "env": "webkit / iPhone SE",
    "name": "Объём чтения 600–1300 слов",
    "passed": true,
-   "detail": "902 слов"
+   "detail": "927 слов"
   },
   {
    "env": "webkit / iPhone SE",
@@ -167,7 +167,7 @@
    "env": "webkit / iPhone SE",
    "name": "Администратор видит панель статистики",
    "passed": true,
-   "detail": "{\"vis\":true,\"total\":\"1\",\"unique\":\"0\",\"now\":\"0\",\"today\":\"1\",\"readings\":\"2\",\"bars\":7}"
+   "detail": "{\"vis\":true,\"total\":\"1\",\"unique\":\"0\",\"now\":\"0\",\"today\":\"1\",\"readings\":\"1\",\"bars\":7}"
   },
   {
    "env": "webkit / iPhone SE",
@@ -279,7 +279,7 @@
   },
   {
    "env": "webkit / iPhone SE",
-   "name": "Внешние запросы только к счётчику",
+   "name": "Внешние запросы только к счётчику и определению IP",
    "passed": true
   },
   {
@@ -291,7 +291,7 @@
    "env": "webkit / iPhone SE",
    "name": "Счётчик: посещение, новое устройство, день, посетитель дня и «онлайн»",
    "passed": true,
-   "detail": "{\"visits\":1,\"day-20261018\":1,\"visitors\":1,\"uday-20261018\":1,\"on-29872275\":1}"
+   "detail": "{\"visits\":1,\"day-20261018\":1,\"visitors\":1,\"uday-20261018\":1,\"on-29872286\":1}"
   },
   {
    "env": "webkit / iPhone SE",
@@ -317,6 +317,54 @@
   {
    "env": "webkit / iPhone SE",
    "name": "Посещения и расклады администратора не засчитываются",
+   "passed": true
+  },
+  {
+   "env": "webkit / iPhone SE",
+   "name": "Карты дня: первый расклад",
+   "passed": true,
+   "detail": "These are your cards of the day. A new spread comes tomorrow, but you can ask these cards as many questions as you like: “Ask a question”."
+  },
+  {
+   "env": "webkit / iPhone SE",
+   "name": "Повторное «Гадать» в тот же день показывает те же карты",
+   "passed": true,
+   "detail": "Today’s cards are already laid out — here are your cards of the day. A new spread will be available in 8 h 34 min. Ask a question and the cards of the day will answer it."
+  },
+  {
+   "env": "webkit / iPhone SE",
+   "name": "После перезагрузки — те же карты",
+   "passed": true
+  },
+  {
+   "env": "webkit / iPhone SE",
+   "name": "Вопросов можно задавать сколько угодно — все по картам дня",
+   "passed": true,
+   "detail": "The cards of the day answered your question. Ask as many questions as you like; new cards in 8 h 34 min."
+  },
+  {
+   "env": "webkit / iPhone SE",
+   "name": "Тема вопроса распознаётся в каждом ответе",
+   "passed": true
+  },
+  {
+   "env": "webkit / iPhone SE",
+   "name": "Другое устройство или очищенный браузер с того же IP получает те же карты",
+   "passed": true
+  },
+  {
+   "env": "webkit / iPhone SE",
+   "name": "С другого IP — другие карты",
+   "passed": true
+  },
+  {
+   "env": "webkit / iPhone SE",
+   "name": "Без сервиса IP расклад всё равно работает и тоже один в сутки",
+   "passed": true
+  },
+  {
+   "env": "webkit / iPhone SE",
+   "name": "Администратор не ограничен: каждый раз новые карты",
    "passed": true
   },
   {
@@ -424,7 +472,7 @@
    "env": "webkit / iPhone 16",
    "name": "Объём чтения 600–1300 слов",
    "passed": true,
-   "detail": "931 слов"
+   "detail": "911 слов"
   },
   {
    "env": "webkit / iPhone 16",
@@ -481,7 +529,7 @@
    "env": "webkit / iPhone 16",
    "name": "Администратор видит панель статистики",
    "passed": true,
-   "detail": "{\"vis\":true,\"total\":\"1\",\"unique\":\"0\",\"now\":\"0\",\"today\":\"1\",\"readings\":\"2\",\"bars\":7}"
+   "detail": "{\"vis\":true,\"total\":\"1\",\"unique\":\"0\",\"now\":\"0\",\"today\":\"1\",\"readings\":\"1\",\"bars\":7}"
   },
   {
    "env": "webkit / iPhone 16",
@@ -593,7 +641,7 @@
   },
   {
    "env": "webkit / iPhone 16",
-   "name": "Внешние запросы только к счётчику",
+   "name": "Внешние запросы только к счётчику и определению IP",
    "passed": true
   },
   {
@@ -605,7 +653,7 @@
    "env": "webkit / iPhone 16",
    "name": "Счётчик: посещение, новое устройство, день, посетитель дня и «онлайн»",
    "passed": true,
-   "detail": "{\"visits\":1,\"day-20261018\":1,\"visitors\":1,\"uday-20261018\":1,\"on-29872275\":1}"
+   "detail": "{\"visits\":1,\"day-20261018\":1,\"visitors\":1,\"uday-20261018\":1,\"on-29872287\":1}"
   },
   {
    "env": "webkit / iPhone 16",
@@ -631,6 +679,54 @@
   {
    "env": "webkit / iPhone 16",
    "name": "Посещения и расклады администратора не засчитываются",
+   "passed": true
+  },
+  {
+   "env": "webkit / iPhone 16",
+   "name": "Карты дня: первый расклад",
+   "passed": true,
+   "detail": "These are your cards of the day. A new spread comes tomorrow, but you can ask these cards as many questions as you like: “Ask a question”."
+  },
+  {
+   "env": "webkit / iPhone 16",
+   "name": "Повторное «Гадать» в тот же день показывает те же карты",
+   "passed": true,
+   "detail": "Today’s cards are already laid out — here are your cards of the day. A new spread will be available in 8 h 33 min. Ask a question and the cards of the day will answer it."
+  },
+  {
+   "env": "webkit / iPhone 16",
+   "name": "После перезагрузки — те же карты",
+   "passed": true
+  },
+  {
+   "env": "webkit / iPhone 16",
+   "name": "Вопросов можно задавать сколько угодно — все по картам дня",
+   "passed": true,
+   "detail": "The cards of the day answered your question. Ask as many questions as you like; new cards in 8 h 32 min."
+  },
+  {
+   "env": "webkit / iPhone 16",
+   "name": "Тема вопроса распознаётся в каждом ответе",
+   "passed": true
+  },
+  {
+   "env": "webkit / iPhone 16",
+   "name": "Другое устройство или очищенный браузер с того же IP получает те же карты",
+   "passed": true
+  },
+  {
+   "env": "webkit / iPhone 16",
+   "name": "С другого IP — другие карты",
+   "passed": true
+  },
+  {
+   "env": "webkit / iPhone 16",
+   "name": "Без сервиса IP расклад всё равно работает и тоже один в сутки",
+   "passed": true
+  },
+  {
+   "env": "webkit / iPhone 16",
+   "name": "Администратор не ограничен: каждый раз новые карты",
    "passed": true
   },
   {
@@ -744,7 +840,7 @@
    "env": "webkit / iPhone 16 Pro Max",
    "name": "Объём чтения 600–1300 слов",
    "passed": true,
-   "detail": "941 слов"
+   "detail": "920 слов"
   },
   {
    "env": "webkit / iPhone 16 Pro Max",
@@ -801,7 +897,7 @@
    "env": "webkit / iPhone 16 Pro Max",
    "name": "Администратор видит панель статистики",
    "passed": true,
-   "detail": "{\"vis\":true,\"total\":\"1\",\"unique\":\"0\",\"now\":\"0\",\"today\":\"1\",\"readings\":\"2\",\"bars\":7}"
+   "detail": "{\"vis\":true,\"total\":\"1\",\"unique\":\"0\",\"now\":\"0\",\"today\":\"1\",\"readings\":\"1\",\"bars\":7}"
   },
   {
    "env": "webkit / iPhone 16 Pro Max",
@@ -913,7 +1009,7 @@
   },
   {
    "env": "webkit / iPhone 16 Pro Max",
-   "name": "Внешние запросы только к счётчику",
+   "name": "Внешние запросы только к счётчику и определению IP",
    "passed": true
   },
   {
@@ -925,7 +1021,7 @@
    "env": "webkit / iPhone 16 Pro Max",
    "name": "Счётчик: посещение, новое устройство, день, посетитель дня и «онлайн»",
    "passed": true,
-   "detail": "{\"visits\":1,\"day-20261018\":1,\"visitors\":1,\"uday-20261018\":1,\"on-29872276\":1}"
+   "detail": "{\"visits\":1,\"day-20261018\":1,\"visitors\":1,\"uday-20261018\":1,\"on-29872289\":1}"
   },
   {
    "env": "webkit / iPhone 16 Pro Max",
@@ -951,6 +1047,54 @@
   {
    "env": "webkit / iPhone 16 Pro Max",
    "name": "Посещения и расклады администратора не засчитываются",
+   "passed": true
+  },
+  {
+   "env": "webkit / iPhone 16 Pro Max",
+   "name": "Карты дня: первый расклад",
+   "passed": true,
+   "detail": "These are your cards of the day. A new spread comes tomorrow, but you can ask these cards as many questions as you like: “Ask a question”."
+  },
+  {
+   "env": "webkit / iPhone 16 Pro Max",
+   "name": "Повторное «Гадать» в тот же день показывает те же карты",
+   "passed": true,
+   "detail": "Today’s cards are already laid out — here are your cards of the day. A new spread will be available in 8 h 31 min. Ask a question and the cards of the day will answer it."
+  },
+  {
+   "env": "webkit / iPhone 16 Pro Max",
+   "name": "После перезагрузки — те же карты",
+   "passed": true
+  },
+  {
+   "env": "webkit / iPhone 16 Pro Max",
+   "name": "Вопросов можно задавать сколько угодно — все по картам дня",
+   "passed": true,
+   "detail": "The cards of the day answered your question. Ask as many questions as you like; new cards in 8 h 31 min."
+  },
+  {
+   "env": "webkit / iPhone 16 Pro Max",
+   "name": "Тема вопроса распознаётся в каждом ответе",
+   "passed": true
+  },
+  {
+   "env": "webkit / iPhone 16 Pro Max",
+   "name": "Другое устройство или очищенный браузер с того же IP получает те же карты",
+   "passed": true
+  },
+  {
+   "env": "webkit / iPhone 16 Pro Max",
+   "name": "С другого IP — другие карты",
+   "passed": true
+  },
+  {
+   "env": "webkit / iPhone 16 Pro Max",
+   "name": "Без сервиса IP расклад всё равно работает и тоже один в сутки",
+   "passed": true
+  },
+  {
+   "env": "webkit / iPhone 16 Pro Max",
+   "name": "Администратор не ограничен: каждый раз новые карты",
    "passed": true
   },
   {
@@ -1058,7 +1202,7 @@
    "env": "chromium / iPhone 16",
    "name": "Объём чтения 600–1300 слов",
    "passed": true,
-   "detail": "951 слов"
+   "detail": "918 слов"
   },
   {
    "env": "chromium / iPhone 16",
@@ -1115,7 +1259,7 @@
    "env": "chromium / iPhone 16",
    "name": "Администратор видит панель статистики",
    "passed": true,
-   "detail": "{\"vis\":true,\"total\":\"2\",\"unique\":\"1\",\"now\":\"1\",\"today\":\"2\",\"readings\":\"2\",\"bars\":7}"
+   "detail": "{\"vis\":true,\"total\":\"2\",\"unique\":\"1\",\"now\":\"1\",\"today\":\"2\",\"readings\":\"1\",\"bars\":7}"
   },
   {
    "env": "chromium / iPhone 16",
@@ -1227,7 +1371,7 @@
   },
   {
    "env": "chromium / iPhone 16",
-   "name": "Внешние запросы только к счётчику",
+   "name": "Внешние запросы только к счётчику и определению IP",
    "passed": true
   },
   {
@@ -1239,7 +1383,7 @@
    "env": "chromium / iPhone 16",
    "name": "Счётчик: посещение, новое устройство, день, посетитель дня и «онлайн»",
    "passed": true,
-   "detail": "{\"visits\":1,\"day-20261018\":1,\"visitors\":1,\"uday-20261018\":1,\"on-29872277\":1}"
+   "detail": "{\"visits\":1,\"day-20261018\":1,\"visitors\":1,\"uday-20261018\":1,\"on-29872290\":1}"
   },
   {
    "env": "chromium / iPhone 16",
@@ -1265,6 +1409,54 @@
   {
    "env": "chromium / iPhone 16",
    "name": "Посещения и расклады администратора не засчитываются",
+   "passed": true
+  },
+  {
+   "env": "chromium / iPhone 16",
+   "name": "Карты дня: первый расклад",
+   "passed": true,
+   "detail": "These are your cards of the day. A new spread comes tomorrow, but you can ask these cards as many questions as you like: “Ask a question”."
+  },
+  {
+   "env": "chromium / iPhone 16",
+   "name": "Повторное «Гадать» в тот же день показывает те же карты",
+   "passed": true,
+   "detail": "Today’s cards are already laid out — here are your cards of the day. A new spread will be available in 8 h 30 min. Ask a question and the cards of the day will answer it."
+  },
+  {
+   "env": "chromium / iPhone 16",
+   "name": "После перезагрузки — те же карты",
+   "passed": true
+  },
+  {
+   "env": "chromium / iPhone 16",
+   "name": "Вопросов можно задавать сколько угодно — все по картам дня",
+   "passed": true,
+   "detail": "The cards of the day answered your question. Ask as many questions as you like; new cards in 8 h 30 min."
+  },
+  {
+   "env": "chromium / iPhone 16",
+   "name": "Тема вопроса распознаётся в каждом ответе",
+   "passed": true
+  },
+  {
+   "env": "chromium / iPhone 16",
+   "name": "Другое устройство или очищенный браузер с того же IP получает те же карты",
+   "passed": true
+  },
+  {
+   "env": "chromium / iPhone 16",
+   "name": "С другого IP — другие карты",
+   "passed": true
+  },
+  {
+   "env": "chromium / iPhone 16",
+   "name": "Без сервиса IP расклад всё равно работает и тоже один в сутки",
+   "passed": true
+  },
+  {
+   "env": "chromium / iPhone 16",
+   "name": "Администратор не ограничен: каждый раз новые карты",
    "passed": true
   }
  ]

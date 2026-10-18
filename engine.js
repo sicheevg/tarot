@@ -160,5 +160,6 @@ out.push(L.h[9],L.sum(N[b],lc(thText(b)),N[s],lc(shadow(s))),L.ask+quest(b),L.ac
 return out.join('\n\n');
 }
 function spread(){const p=Array.from({length:22},(_,i)=>i);const rnd=(n)=>{if(window.crypto&&crypto.getRandomValues){const u=new Uint32Array(1);crypto.getRandomValues(u);return u[0]%n}return Math.floor(Math.random()*n)};for(let i=21;i>0;i--){const j=rnd(i+1);[p[i],p[j]]=[p[j],p[i]]}const [a,b,c]=p;return [a,b,c,RED(a+b+c),RED(a+c),RED(a+b),RED(b+c)]}
-window.TarotEngine={reading,spread,RED,GAZE,ROMAN,degree,series,theme};
+function spreadFrom(seed){const r=rng('spread|'+seed),p=Array.from({length:22},(_,i)=>i);for(let i=21;i>0;i--){const j=Math.floor(r()*(i+1));[p[i],p[j]]=[p[j],p[i]]}const [a,b,c]=p;return [a,b,c,RED(a+b+c),RED(a+c),RED(a+b),RED(b+c)]}
+window.TarotEngine={reading,spread,spreadFrom,RED,GAZE,ROMAN,degree,series,theme};
 })();

@@ -9,8 +9,9 @@ for(const [bname,devName] of [['webkit','iPhone SE'],['webkit','iPhone 16'],['we
 const env=bname+' / '+devName;const browser=await pw[bname].launch();
 try{const dev={...pw.devices[devName]};delete dev.defaultBrowserType;const ctx=await browser.newContext({...dev,acceptDownloads:true});
 const counters={},hits=[];await ctx.route('https://abacus.jasoncameron.dev/**',route=>{const u=new URL(route.request().url());const [,op,ns,key]=u.pathname.split('/');if(!/^test-/.test(ns))return route.fulfill({status:400,body:'{}'});if(op==='hit'){counters[key]=(counters[key]||0)+1;hits.push(key);return route.fulfill({status:200,contentType:'application/json',headers:{'access-control-allow-origin':'*'},body:JSON.stringify({value:counters[key]})})}if(op==='get'){return counters[key]==null?route.fulfill({status:404,contentType:'application/json',headers:{'access-control-allow-origin':'*'},body:'{"error":"Key not found"}'}):route.fulfill({status:200,contentType:'application/json',headers:{'access-control-allow-origin':'*'},body:JSON.stringify({value:counters[key]})})}route.fulfill({status:400,body:'{}'})});
+await ctx.route(/api(64)?\.ipify\.org/,r=>r.fulfill({status:200,contentType:'application/json',headers:{'access-control-allow-origin':'*'},body:'{"ip":"203.0.113.7"}'}));
 const TESTNS='test-'+Date.now().toString(36)+'-'+bname;await ctx.addInitScript(ns=>{try{localStorage.setItem('stats_ns',JSON.stringify(ns))}catch(e){}},TESTNS);
-const external=[];ctx.on('request',r=>{const u=new URL(r.url());if(u.hostname!=='localhost'&&u.hostname!=='abacus.jasoncameron.dev'&&!u.protocol.startsWith('data')&&!u.protocol.startsWith('blob'))external.push(r.url())});
+const external=[];ctx.on('request',r=>{const u=new URL(r.url());if(u.hostname!=='localhost'&&u.hostname!=='abacus.jasoncameron.dev'&&!/ipify\.org$/.test(u.hostname)&&!u.protocol.startsWith('data')&&!u.protocol.startsWith('blob'))external.push(r.url())});
 const page=await ctx.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
 await page.goto(base,{waitUntil:'load'});
 check(env,'Нет ошибок JavaScript при запуске',errors.length===0,errors.join(' | ')||undefined);
@@ -106,12 +107,13 @@ check(env,'Без интернета: страница, расклад и кар
 let ruOff=false;try{await page.goto(base+'ru/',{waitUntil:'load'});ruOff=await page.locator('h1').textContent()==='ТАРО МАРСЕЛЬ'}catch(e){}check(env,'Без интернета: русская страница открывается',ruOff);await ctx.setOffline(false)}
 else check(env,'Сервис-воркер для офлайна зарегистрирован',false,swOk);
 await page.locator('#menu').tap().catch(()=>{});await page.evaluate(()=>document.querySelector('#adminOff').click());check(env,'Кнопка выключает режим администратора',await page.evaluate(()=>document.querySelector('#histBox').hidden&&!localStorage.getItem('admin_v1')&&JSON.parse(localStorage.getItem('history')).length>0),'история при этом не удаляется');
-check(env,'Внешние запросы только к счётчику',external.length===0,external.slice(0,3).join(' ')||undefined);
+check(env,'Внешние запросы только к счётчику и определению IP',external.length===0,external.slice(0,3).join(' ')||undefined);
 check(env,'Нет ошибок JavaScript за весь сценарий',errors.length===0,errors.join(' | ')||undefined);
 
 {const sctx=await browser.newContext({...dev,serviceWorkers:'block'});const C={},hs=[];const NS='test-exact-'+Date.now().toString(36);
 await sctx.addInitScript(ns=>{try{if(!localStorage.getItem('stats_ns'))localStorage.setItem('stats_ns',JSON.stringify(ns))}catch(e){}},NS);
 await sctx.route('https://abacus.jasoncameron.dev/**',route=>{const u=new URL(route.request().url());const [,op,ns,key]=u.pathname.split('/');const H={'access-control-allow-origin':'*'};if(ns!==NS)return route.fulfill({status:400,headers:H,body:'{}'});if(op==='hit'){C[key]=(C[key]||0)+1;hs.push(key);return route.fulfill({status:200,contentType:'application/json',headers:H,body:JSON.stringify({value:C[key]})})}if(op==='get')return C[key]==null?route.fulfill({status:404,contentType:'application/json',headers:H,body:'{"error":"Key not found"}'}):route.fulfill({status:200,contentType:'application/json',headers:H,body:JSON.stringify({value:C[key]})});route.fulfill({status:400,headers:H,body:'{}'})});
+await sctx.route(/api(64)?\.ipify\.org/,r=>r.fulfill({status:200,contentType:'application/json',headers:{'access-control-allow-origin':'*'},body:'{"ip":"203.0.113.8"}'}));
 const sp=await sctx.newPage();await sp.goto(base);await sp.waitForTimeout(600);
 check(env,'Счётчик: посещение, новое устройство, день, посетитель дня и «онлайн»',C.visits===1&&C.visitors===1&&Object.keys(C).some(k=>/^day-\d{8}$/.test(k))&&Object.keys(C).some(k=>/^uday-\d{8}$/.test(k))&&Object.keys(C).some(k=>/^on-\d+$/.test(k)),JSON.stringify(C));
 await sp.reload();await sp.waitForTimeout(400);check(env,'Перезагрузка в той же вкладке не удваивает посещение',C.visits===1);
@@ -124,8 +126,23 @@ check(env,'Панель администратора показывает точ
 await sp.locator('#orb').tap({force:true});await sp.waitForFunction(()=>!busy,undefined,{timeout:20000});await sp.waitForTimeout(400);
 check(env,'Посещения и расклады администратора не засчитываются',hs.length===before,hs.slice(before).join(',')||undefined);
 await sctx.close()}
+
+{const mk=async(ip,opts={})=>{const c=await browser.newContext({...dev,serviceWorkers:'block'});await c.route('https://abacus.jasoncameron.dev/**',r=>r.fulfill({status:404,headers:{'access-control-allow-origin':'*'},body:'{}'}));await c.route(/api(64)?\.ipify\.org/,r=>ip?r.fulfill({status:200,contentType:'application/json',headers:{'access-control-allow-origin':'*'},body:JSON.stringify({ip})}):r.abort());await c.addInitScript(()=>localStorage.setItem('stats_ns','"test-daily"'));if(opts.admin){const h=fs.readFileSync(path.join(ROOT,'app.js'),'utf8').match(/ADMIN_HASH='([0-9a-f]{64})'/)[1];await c.addInitScript(h=>localStorage.setItem('admin_v1',JSON.stringify(h)),h)}const p=await c.newPage();await p.goto(base);return {c,p}};
+const go=async p=>{await p.locator('#orb').tap({force:true});await p.waitForFunction(()=>!busy,undefined,{timeout:20000});return p.evaluate(()=>({ids:current.ids.join(','),open:document.querySelectorAll('.card.open').length,status:document.querySelector('#status').textContent,text:document.querySelector('#result').textContent}))};
+const ask=async(p,q)=>{await p.locator('#ask').tap();await p.locator('#q').fill(q);await p.locator('#go').tap();await p.waitForFunction(()=>!busy,undefined,{timeout:20000});return p.evaluate(()=>({ids:current.ids.join(','),text:document.querySelector('#result').textContent,status:document.querySelector('#status').textContent}))};
+const A=await mk('203.0.113.7');const r1=await go(A.p);check(env,'Карты дня: первый расклад',r1.open===7&&/cards of the day/.test(r1.status),r1.status);
+const r2=await go(A.p);check(env,'Повторное «Гадать» в тот же день показывает те же карты',r2.ids===r1.ids&&r2.open===7&&/already/.test(r2.status),r2.status);
+await A.p.reload();const r3=await go(A.p);check(env,'После перезагрузки — те же карты',r3.ids===r1.ids);
+const q1=await ask(A.p,'What matters in my work right now?'),q2=await ask(A.p,'What do I need to understand about love?'),q3=await ask(A.p,'And about money?');
+check(env,'Вопросов можно задавать сколько угодно — все по картам дня',[q1,q2,q3].every(x=>x.ids===r1.ids)&&q1.text.includes('my work')&&q2.text.includes('love')&&q3.text.includes('money')&&q1.text!==q2.text&&/as many questions/.test(q3.status),q3.status);
+check(env,'Тема вопроса распознаётся в каждом ответе',q1.text.includes('work and projects')&&q2.text.includes('love and relationships')&&q3.text.includes('money and resources'));
+await A.c.close();
+const B=await mk('203.0.113.7');const b1=await go(B.p);check(env,'Другое устройство или очищенный браузер с того же IP получает те же карты',b1.ids===r1.ids);await B.c.close();
+const C2=await mk('198.51.100.9');const c1=await go(C2.p);check(env,'С другого IP — другие карты',c1.ids!==r1.ids&&c1.open===7);await C2.c.close();
+const D=await mk(null);const d1=await go(D.p),d2=await go(D.p);check(env,'Без сервиса IP расклад всё равно работает и тоже один в сутки',d1.open===7&&d2.ids===d1.ids);await D.c.close();
+const AD=await mk('203.0.113.7',{admin:true});const a1=await go(AD.p),a2=await go(AD.p),a3=await go(AD.p);check(env,'Администратор не ограничен: каждый раз новые карты',new Set([a1.ids,a2.ids,a3.ids]).size>=2);await AD.c.close()}
 if(bname==='webkit'&&devName==='iPhone SE'){await page.goto(base);await page.screenshot({path:path.join(ROOT,'..','shot-se-start.png')})}
 if(bname==='webkit'&&devName==='iPhone 16'){await page.goto(base);await page.locator('#orb').tap({force:true});await page.waitForFunction(()=>!busy);await page.waitForTimeout(800);check(env,'После нажатия экран прокручен к картам',await page.evaluate(()=>scrollY>100),'scrollY');await page.screenshot({path:path.join(ROOT,'..','shot-16-reading.png')});await page.evaluate(()=>document.querySelector('#result').scrollIntoView());await page.screenshot({path:path.join(ROOT,'..','shot-16-text.png')});await page.screenshot({path:path.join(ROOT,'..','shot-16-full.png'),fullPage:true})}
 await ctx.close()}catch(e){check(env,'Сценарий завершён без исключения',false,e.message.split('\n')[0])}finally{await browser.close()}}
-srv.close();fs.writeFileSync(path.join(ROOT,'test-results.json'),JSON.stringify({version:12,environment:'Playwright WebKit (движок Safari) и Chromium с профилями iPhone; локальный сервер; внешние запросы отслеживаются',timestamp:new Date().toISOString(),passed:results.filter(r=>r.passed).length,total:results.length,results},null,1));
+srv.close();fs.writeFileSync(path.join(ROOT,'test-results.json'),JSON.stringify({version:14,environment:'Playwright WebKit (движок Safari) и Chromium с профилями iPhone; локальный сервер; внешние запросы отслеживаются',timestamp:new Date().toISOString(),passed:results.filter(r=>r.passed).length,total:results.length,results},null,1));
 console.log('\nИТОГ: '+results.filter(r=>r.passed).length+'/'+results.length);process.exitCode=failed?1:0})();
