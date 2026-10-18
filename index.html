@@ -30,7 +30,7 @@ dialog{width:min(92vw,440px);background:#17101f;color:white;border:1px solid var
 </style></head><body><main>
 <header><h1>TAROT OF MARSEILLE</h1><button id="lang" type="button" aria-label="Switch language / Сменить язык">RU</button><button id="menu" type="button" aria-label="Settings">☰</button></header>
 <aside id="telegram-art" aria-label="Author's drawings"><div><h2 id="tgTitle">My drawings on Telegram</h2><p id="tgText">Take a look at my channel with drawings.</p></div><a id="tgBtn" href="https://t.me/printprintprintprintprintprint" target="_blank" rel="noopener noreferrer">🎨 See the drawings →</a></aside>
-<section id="settings" hidden><h3 id="setTitle">Appearance</h3><select id="theme" aria-label="Theme"></select><p id="offline" class="small"></p><details><summary id="methodTitle">About the method</summary><p id="methodText" class="small"></p></details></section>
+<section id="settings" hidden><h3 id="setTitle">Appearance</h3><select id="theme" aria-label="Theme"></select><p id="offline" class="small"></p><p id="adminLine" class="small" hidden></p><button id="adminOff" type="button" hidden></button><details><summary id="methodTitle">About the method</summary><p id="methodText" class="small"></p></details></section>
 <div id="orn"></div>
 <div class="ring"><button id="orb" type="button">Read</button></div>
 <div id="status" class="small" role="status"></div>
@@ -38,7 +38,7 @@ dialog{width:min(92vw,440px);background:#17101f;color:white;border:1px solid var
 <div class="row"><button id="again" type="button">Read again</button><button id="ask" type="button">Ask a question</button></div>
 <div id="question" class="small"></div>
 <section id="result" class="panel" hidden></section>
-<details><summary><span id="histTitle">History</span> <span id="count"></span></summary><input id="search" placeholder="Search by question or card"><div id="history"></div><div class="tools"><button id="export" type="button">Export JSON</button><button id="import" type="button">Import</button></div><input id="file" hidden type="file" accept=".json,application/json"></details>
+<details id="histBox" hidden><summary><span id="histTitle">History</span> <span id="count"></span></summary><input id="search" placeholder="Search by question or card"><div id="history"></div><div class="tools"><button id="export" type="button">Export JSON</button><button id="import" type="button">Import</button></div><input id="file" hidden type="file" accept=".json,application/json"></details>
 <dialog id="dialog"><h3 id="qTitle">Your question</h3><p id="qHint" class="small"></p><textarea id="q" rows="4"></textarea><div class="row"><button id="cancel" type="button">Cancel</button><button id="go" type="button">Read</button></div></dialog>
 <section id="about" class="seo"><h2>Free Marseille Tarot reading online — the Jodorowsky method</h2>
 <p>A free online reading of the <b>Marseille Tarot</b> (<b>Tarot de Marseille</b>), built around the <b>Jodorowsky Tarot</b> method. Ask a question, tap <b>Read</b> and get a detailed seven-card reading of the Tarot of Marseille. Three cards are drawn — origin, centre and direction — and four more are derived by adding their numbers (the “theosophical sum” spread associated with Alejandro Jodorowsky).</p>
@@ -48,5 +48,5 @@ dialog{width:min(92vw,440px);background:#17101f;color:white;border:1px solid var
 <p lang="ru">Марсельское Таро онлайн бесплатно: гадание по методу Ходоровски, расклад из семи карт, нумерология и пары карт. <a href="./ru/">Открыть русскую версию</a>.</p></section>
 <p id="foot" class="small"></p>
 </main>
-<script src="./data-ru.js?v=10"></script><script src="./data-en.js?v=10"></script><script src="./engine.js?v=10"></script><script src="./app.js?v=10"></script>
+<script src="./data-ru.js?v=11"></script><script src="./data-en.js?v=11"></script><script src="./engine.js?v=11"></script><script src="./app.js?v=11"></script>
 </body></html>

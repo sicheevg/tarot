@@ -44,7 +44,17 @@ const secs=['ЗЕРКАЛО ВОПРОСА','ГЛАВНЫЙ АКЦЕНТ','СЦ�
 check(env,'Чтение содержит все 10 разделов',secs.every(s=>txt.includes(s)),secs.filter(s=>!txt.includes(s)).join(',')||undefined);
 const words=txt.split(/\s+/).length;check(env,'Объём чтения 600–1300 слов',words>=600&&words<=1300,words+' слов');
 check(env,'В тексте нет undefined/NaN',!/undefined|NaN/.test(txt));
-check(env,'Чтение сохранено в истории',await page.evaluate(()=>H.length===1&&JSON.parse(localStorage.getItem('history')).length===1));
+check(env,'Посетитель не видит раздел «История»',await page.evaluate(()=>document.querySelector('#histBox').hidden&&getComputedStyle(document.querySelector('#histBox')).display==='none'));
+check(env,'У посетителя история не записывается на устройство',await page.evaluate(()=>{const h=localStorage.getItem('history');return !h||JSON.parse(h).length===0}));
+await page.goto(base+'#admin=wrong-code');await page.waitForTimeout(400);
+check(env,'Неверный код не включает режим администратора',await page.evaluate(()=>document.querySelector('#histBox').hidden&&!localStorage.getItem('admin_v1')));
+const SECRET=process.env.TAROT_ADMIN_SECRET;
+if(SECRET){await page.goto(base+'#admin='+encodeURIComponent(SECRET));await page.waitForFunction(()=>!document.querySelector('#histBox').hidden,undefined,{timeout:5000}).catch(()=>{})}
+else{const hash=fs.readFileSync(path.join(ROOT,'app.js'),'utf8').match(/ADMIN_HASH='([0-9a-f]{64})'/)[1];await page.evaluate(h=>localStorage.setItem('admin_v1',JSON.stringify(h)),hash);await page.reload()}
+check(env,'Секретная ссылка включает режим администратора',await page.evaluate(()=>!document.querySelector('#histBox').hidden&&!!localStorage.getItem('admin_v1')),SECRET?'по ссылке':'через сохранённый хэш');
+check(env,'Код удалён из адресной строки',await page.evaluate(()=>!location.hash.includes('admin')));
+await page.reload();check(env,'Режим администратора сохраняется после перезагрузки',await page.evaluate(()=>!document.querySelector('#histBox').hidden));
+const pv=await browser.newContext({...dev});const pvp=await pv.newPage();await pvp.goto(base);check(env,'На другом устройстве история скрыта',await pvp.evaluate(()=>document.querySelector('#histBox').hidden));await pv.close();
 check(env,'Нет переполнения после расклада',await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
 await page.locator('#ask').tap();await page.locator('#q').fill('Что будет в моих отношениях с любимым человеком? '+'https://example.com/'+'a'.repeat(300));await page.locator('#go').tap();await page.waitForFunction(()=>!busy,undefined,{timeout:20000});
 const t2=await page.locator('#result').textContent();
@@ -61,19 +71,19 @@ const en=await page.locator('#result').textContent();
 check(env,'Текущее чтение пересобрано на английском',en.includes('DETAILED READING')&&en.includes('SCENE OF GAZES')&&!/[А-Яа-яЁё]/.test(en.replace(/Вопрос|Что будет[^\n]*/g,'').replace(/Question: [^\n]*/,'')));
 check(env,'Названия карт на английском',await page.evaluate(()=>[...document.querySelectorAll('.card .nm')].every(s=>!/[А-Яа-яЁё]/.test(s.textContent))));
 await page.reload();
-check(env,'Язык и история сохраняются после перезагрузки',await page.locator('#orb').textContent()==='Read'&&await page.evaluate(()=>H.length===2));
+check(env,'Язык и история сохраняются после перезагрузки',await page.locator('#orb').textContent()==='Read'&&await page.evaluate(()=>H.length===1));
 await page.locator('#lang').tap();
 await page.locator('#menu').tap();for(let i=0;i<10;i++)await page.locator('#theme').selectOption(String(i));await page.reload();
 check(env,'Тема оформления сохраняется',await page.locator('#theme').inputValue()==='9');
 await page.evaluate(()=>{const old={id:'old-1',ts:1700000000000,q:'старый',ids:[1,2,3,6,4,3,5],local:'Старое чтение',ai:'Старый ответ ИИ'};const h=JSON.parse(localStorage.getItem('history'));h.push(old);localStorage.setItem('history',JSON.stringify(h))});await page.reload();
-check(env,'Старые записи с ИИ-ответом открываются как архив',await page.evaluate(()=>document.querySelector('#history').textContent.includes('архив прежней версии')&&H.length===3));
-await page.evaluate(()=>document.querySelector('#search').closest('details').open=true);await page.locator('#search').fill('старый');check(env,'Поиск по истории',await page.locator('#history .entry').count()===1);await page.locator('#search').fill('');
+check(env,'Старые записи с ИИ-ответом открываются как архив',await page.evaluate(()=>document.querySelector('#history').textContent.includes('архив прежней версии')&&H.length===2));
+await page.evaluate(()=>document.querySelector('#histBox').open=true);await page.locator('#search').fill('старый');check(env,'Поиск по истории',await page.locator('#history .entry').count()===1);await page.locator('#search').fill('');
 const [dl]=await Promise.all([page.waitForEvent('download'),page.evaluate(()=>document.querySelector('#export').click())]);const exported=JSON.parse(fs.readFileSync(await dl.path(),'utf8'));
-check(env,'Экспорт JSON',Array.isArray(exported)&&exported.length===3);
+check(env,'Экспорт JSON',Array.isArray(exported)&&exported.length===2);
 const tmp=path.join(require('os').tmpdir(),'imp-'+Date.now()+'.json');fs.writeFileSync(tmp,JSON.stringify([{id:'new-1',ts:1700000001000,q:'',ids:[0,1,2,3,4,1,3],local:'x'}]));await page.setInputFiles('#file',tmp);await page.waitForTimeout(300);
-check(env,'Импорт корректной записи',await page.evaluate(()=>H.length===4));
+check(env,'Импорт корректной записи',await page.evaluate(()=>H.length===3));
 fs.writeFileSync(tmp,JSON.stringify([{id:'bad',ts:1,ids:[99],local:'x'}]));await page.setInputFiles('#file',tmp);await page.waitForTimeout(300);
-check(env,'Повреждённый импорт отклонён целиком',await page.evaluate(()=>H.length===4));
+check(env,'Повреждённый импорт отклонён целиком',await page.evaluate(()=>H.length===3));
 // Офлайн: сервис-воркер кэширует всё, затем сеть выключается
 const swOk=await page.evaluate(async()=>{if(!('serviceWorker'in navigator))return 'нет API';const r=await Promise.race([navigator.serviceWorker.ready.then(()=>'ok'),new Promise(r=>setTimeout(()=>r('таймаут'),15000))]);return r});
 if(swOk==='ok'){await page.waitForTimeout(1500);await ctx.setOffline(true);await page.reload({waitUntil:'load'}).catch(()=>{});
@@ -81,10 +91,11 @@ let offOk=false;try{await page.locator('#orb').tap({force:true,timeout:5000});aw
 check(env,'Без интернета: страница, расклад и картинки работают',offOk);
 let ruOff=false;try{await page.goto(base+'ru/',{waitUntil:'load'});ruOff=await page.locator('h1').textContent()==='ТАРО МАРСЕЛЬ'}catch(e){}check(env,'Без интернета: русская страница открывается',ruOff);await ctx.setOffline(false)}
 else check(env,'Сервис-воркер для офлайна зарегистрирован',false,swOk);
+await page.locator('#menu').tap().catch(()=>{});await page.evaluate(()=>document.querySelector('#adminOff').click());check(env,'Кнопка выключает режим администратора',await page.evaluate(()=>document.querySelector('#histBox').hidden&&!localStorage.getItem('admin_v1')&&JSON.parse(localStorage.getItem('history')).length>0),'история при этом не удаляется');
 check(env,'Ни одного внешнего сетевого запроса',external.length===0,external.slice(0,3).join(' ')||undefined);
 check(env,'Нет ошибок JavaScript за весь сценарий',errors.length===0,errors.join(' | ')||undefined);
 if(bname==='webkit'&&devName==='iPhone SE'){await page.goto(base);await page.screenshot({path:path.join(ROOT,'..','shot-se-start.png')})}
 if(bname==='webkit'&&devName==='iPhone 16'){await page.goto(base);await page.locator('#orb').tap({force:true});await page.waitForFunction(()=>!busy);await page.waitForTimeout(800);check(env,'После нажатия экран прокручен к картам',await page.evaluate(()=>scrollY>100),'scrollY');await page.screenshot({path:path.join(ROOT,'..','shot-16-reading.png')});await page.evaluate(()=>document.querySelector('#result').scrollIntoView());await page.screenshot({path:path.join(ROOT,'..','shot-16-text.png')});await page.screenshot({path:path.join(ROOT,'..','shot-16-full.png'),fullPage:true})}
 await ctx.close()}catch(e){check(env,'Сценарий завершён без исключения',false,e.message.split('\n')[0])}finally{await browser.close()}}
-srv.close();fs.writeFileSync(path.join(ROOT,'test-results.json'),JSON.stringify({version:10,environment:'Playwright WebKit (движок Safari) и Chromium с профилями iPhone; локальный сервер; внешние запросы отслеживаются',timestamp:new Date().toISOString(),passed:results.filter(r=>r.passed).length,total:results.length,results},null,1));
+srv.close();fs.writeFileSync(path.join(ROOT,'test-results.json'),JSON.stringify({version:11,environment:'Playwright WebKit (движок Safari) и Chromium с профилями iPhone; локальный сервер; внешние запросы отслеживаются',timestamp:new Date().toISOString(),passed:results.filter(r=>r.passed).length,total:results.length,results},null,1));
 console.log('\nИТОГ: '+results.filter(r=>r.passed).length+'/'+results.length);process.exitCode=failed?1:0})();

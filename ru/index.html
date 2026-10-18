@@ -30,7 +30,7 @@ dialog{width:min(92vw,440px);background:#17101f;color:white;border:1px solid var
 </style></head><body><main>
 <header><h1>ТАРО МАРСЕЛЬ</h1><button id="lang" type="button" aria-label="Switch language / Сменить язык">EN</button><button id="menu" type="button" aria-label="Настройки">☰</button></header>
 <aside id="telegram-art" aria-label="Рисунки автора"><div><h2 id="tgTitle">Мои рисунки в Telegram</h2><p id="tgText">Загляните в мой канал с рисунками.</p></div><a id="tgBtn" href="https://t.me/printprintprintprintprintprint" target="_blank" rel="noopener noreferrer">🎨 Смотреть рисунки →</a></aside>
-<section id="settings" hidden><h3 id="setTitle">Оформление</h3><select id="theme" aria-label="Theme"></select><p id="offline" class="small"></p><details><summary id="methodTitle">О методе</summary><p id="methodText" class="small"></p></details></section>
+<section id="settings" hidden><h3 id="setTitle">Оформление</h3><select id="theme" aria-label="Theme"></select><p id="offline" class="small"></p><p id="adminLine" class="small" hidden></p><button id="adminOff" type="button" hidden></button><details><summary id="methodTitle">О методе</summary><p id="methodText" class="small"></p></details></section>
 <div id="orn"></div>
 <div class="ring"><button id="orb" type="button">Гадать</button></div>
 <div id="status" class="small" role="status"></div>
@@ -38,7 +38,7 @@ dialog{width:min(92vw,440px);background:#17101f;color:white;border:1px solid var
 <div class="row"><button id="again" type="button">Гадать снова</button><button id="ask" type="button">Задать вопрос</button></div>
 <div id="question" class="small"></div>
 <section id="result" class="panel" hidden></section>
-<details><summary><span id="histTitle">История</span> <span id="count"></span></summary><input id="search" placeholder="Поиск по вопросу или карте"><div id="history"></div><div class="tools"><button id="export" type="button">Экспорт JSON</button><button id="import" type="button">Импорт</button></div><input id="file" hidden type="file" accept=".json,application/json"></details>
+<details id="histBox" hidden><summary><span id="histTitle">История</span> <span id="count"></span></summary><input id="search" placeholder="Поиск по вопросу или карте"><div id="history"></div><div class="tools"><button id="export" type="button">Экспорт JSON</button><button id="import" type="button">Импорт</button></div><input id="file" hidden type="file" accept=".json,application/json"></details>
 <dialog id="dialog"><h3 id="qTitle">Ваш вопрос</h3><p id="qHint" class="small"></p><textarea id="q" rows="4"></textarea><div class="row"><button id="cancel" type="button">Отмена</button><button id="go" type="button">Гадать</button></div></dialog>
 <section id="about" class="seo"><h2>Марсельское Таро онлайн — бесплатное гадание по методу Ходоровски</h2>
 <p>Задайте вопрос, нажмите <b>«Гадать»</b> и получите подробное толкование расклада из семи карт <b>Марсельского Таро</b>. Вытягиваются три карты — исток, центр и направление, — а ещё четыре вычисляются сложением их номеров. Это расклад «теософская сумма», который связывают с именем <b>Алехандро Ходоровски</b>.</p>
@@ -48,5 +48,5 @@ dialog{width:min(92vw,440px);background:#17101f;color:white;border:1px solid var
 <p>Гадание на картах Таро онлайн бесплатно, без регистрации и рекламы. Работает без интернета на iPhone, Android и компьютере — добавьте на экран «Домой». Есть русская и английская версии. <a href="../">English version</a>.</p></section>
 <p id="foot" class="small"></p>
 </main>
-<script src="../data-ru.js?v=10"></script><script src="../data-en.js?v=10"></script><script src="../engine.js?v=10"></script><script src="../app.js?v=10"></script>
+<script src="../data-ru.js?v=11"></script><script src="../data-en.js?v=11"></script><script src="../engine.js?v=11"></script><script src="../app.js?v=11"></script>
 </body></html>
